@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-
+#define MAX_NUMEROS 1000
 void swap(int *a, int *b)
 {
     int temp = *a;
@@ -12,7 +12,8 @@ int partition(int array[], int bajo, int alto)
 {
     int pivot = array[alto];
     int i = bajo - 1;
-    for (int j = bajo; j <= alto - 1; j++)
+    int j;
+    for (j = bajo; j <= alto - 1; j++)
     {
         if (array[j] <= pivot)
         {
@@ -35,7 +36,8 @@ void quickSort(int array[], int bajo, int alto)
 
 void printArray(int array[], int largoArray)
 {
-    for (int i = 0; i < largoArray; i++)
+    int i;
+    for (i = 0; i < largoArray; i++)
     {
         printf("%d ", array[i]);
     }
@@ -44,25 +46,35 @@ void printArray(int array[], int largoArray)
 
 int main()
 {
-    int arr[] = {10, 4, 7, 2, 8, 9, 1, 5, 6, 3};
-    int n = sizeof(arr) / sizeof(arr[0]);
+    FILE *punteroArchivo = fopen("./numerosRandom.txt", "r");
+    int num, i = 0;
+    int array[MAX_NUMEROS];
+    if (punteroArchivo == NULL)
+    {
+        printf("Por favor, incluir archivo 'numerosRandom.txt en el directorio'");
+        return 0;
+    }
+    while (fscanf(punteroArchivo, "%d", &num) != EOF && i < MAX_NUMEROS)
+    {
+        array[i++] = num;
+    }
 
-    printf("Array inicial: ");
-    printArray(arr, n);
+    printf("Array sin ordenar: ");
+    printArray(array, MAX_NUMEROS);
 
     struct timespec start, end;
     clock_gettime(CLOCK_MONOTONIC, &start);
 
-    quickSort(arr, 0, n - 1);
+    quickSort(array, 0, MAX_NUMEROS - 1);
 
     clock_gettime(CLOCK_MONOTONIC, &end);
 
     double exec_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
 
     printf("\nArray ordenado: ");
-    printArray(arr, n);
+    printArray(array, MAX_NUMEROS);
 
-    printf("\nTiempo de ejecucion: %.9f segundos\n", exec_time);
+    printf("\nTiempo de ejecucion: %.9f milisegundos\n", exec_time * 1000);
 
     return 0;
 }
