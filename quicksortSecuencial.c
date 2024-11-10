@@ -1,6 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
-#define MAX_NUMEROS 1000
+#define MAX_NUMEROS 1000000000
 void swap(int *a, int *b)
 {
     int temp = *a;
@@ -46,21 +47,12 @@ void printArray(int array[], int largoArray)
 
 int main()
 {
-    FILE *punteroArchivo = fopen("./numerosRandom.txt", "r");
     int num, i = 0;
-    int array[MAX_NUMEROS];
-    if (punteroArchivo == NULL)
+    int *array = (int *)malloc(MAX_NUMEROS * sizeof(int));
+    for (i; i <= MAX_NUMEROS; i++)
     {
-        printf("Por favor, incluir archivo 'numerosRandom.txt en el directorio'");
-        return 0;
+        array[i] = rand();
     }
-    while (fscanf(punteroArchivo, "%d", &num) != EOF && i < MAX_NUMEROS)
-    {
-        array[i++] = num;
-    }
-
-    printf("Array sin ordenar: ");
-    printArray(array, MAX_NUMEROS);
 
     struct timespec start, end;
     clock_gettime(CLOCK_MONOTONIC, &start);
@@ -71,8 +63,8 @@ int main()
 
     double exec_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
 
-    printf("\nArray ordenado: ");
-    printArray(array, MAX_NUMEROS);
+    // printf("\nArray ordenado: ");
+    // printArray(array, MAX_NUMEROS);
 
     printf("\nTiempo de ejecucion: %.9f milisegundos\n", exec_time * 1000);
 
