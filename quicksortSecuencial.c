@@ -14,9 +14,9 @@ void swap(int *a, int *b)
 
 int partition(int array[], int low, int high)
 {
-    int pivot = array[high]; // Elige el último elemento como pivote
-    int leftIndex = low - 1; // Índice de la izquierda para encontrar elementos mayores que el pivote
-    int rightIndex = high;   // Índice de la derecha para encontrar elementos menores que el pivote
+    int pivot = array[high];
+    int leftIndex = low - 1;
+    int rightIndex = high;
 
     while (1)
     {
