@@ -14,18 +14,27 @@ void swap(int *a, int *b)
 int partition(int array[], int low, int high)
 {
     int pivot = array[high];
-    int i = low - 1;
-    int j;
-    for (j = low; j < high; j++)
+    int leftIndex = low - 1;
+    int rightIndex = high;
+
+    while (1)
     {
-        if (array[j] <= pivot)
+        do
         {
-            i++;
-            swap(&array[i], &array[j]);
+            leftIndex++;
+        } while (array[leftIndex] < pivot);
+        do
+        {
+            rightIndex--;
+        } while (rightIndex >= low && array[rightIndex] > pivot);
+
+        if (leftIndex >= rightIndex)
+        {
+            swap(&array[leftIndex], &array[high]);
+            return leftIndex;
         }
+        swap(&array[leftIndex], &array[rightIndex]);
     }
-    swap(&array[i + 1], &array[high]);
-    return i + 1;
 }
 
 void quickSort(int array[], int low, int high)
