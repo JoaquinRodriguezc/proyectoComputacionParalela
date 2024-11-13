@@ -44,8 +44,6 @@ void mergeSortedFragments(int *array, int totalSize, int *fragmentSizes, int wor
     int fragmentStartIndices[worldSize];
     int i, j;
 
-    printf("Proceso 0: Iniciando fusión de fragmentos\n");
-
     /*
         Cada fragmento va a tener un índice que apunte a un elemento dentro su fragmento.
         Se inicializan en el comienzo de cada fragmento
@@ -88,7 +86,6 @@ void mergeSortedFragments(int *array, int totalSize, int *fragmentSizes, int wor
         array[i] = tempArray[i];
     }
     free(tempArray);
-    printf("Proceso 0: Fusión de fragmentos completada\n");
 }
 
 int main(int argc, char **argv)
@@ -170,7 +167,7 @@ int main(int argc, char **argv)
     */
     quickSort(localFragment, 0, localFragmentSize - 1);
     printf("Proceso %d: Fragmento ordenado\n", processRank);
-
+    MPI_Barrier(MPI_COMM_WORLD);
     // each even process should send its fragment to the next odd process
     // should call mergeFragments
     // repeat until fragment is just 1
@@ -205,8 +202,9 @@ int main(int argc, char **argv)
                 /*
                 ordenar array
                 */
+                printf("Proceso %i: Iniciando fusión de fragmentos\n", processRank);
                 mergeSortedFragments(mergedOrderedArray, foreignFragmentSize + localFragmentSize, newFragmentSizes, 2);
-
+                printf("Proceso %i: Fusión de fragmentos completada\n", processRank);
                 localFragmentSize = foreignFragmentSize + localFragmentSize;
                 localFragment = (int *)malloc(localFragmentSize * sizeof(int));
                 memcpy(localFragment, mergedOrderedArray, localFragmentSize);
