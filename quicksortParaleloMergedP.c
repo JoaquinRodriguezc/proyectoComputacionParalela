@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <mpi.h>
 #include <string.h>
+#define true 1
+#define false 0
 #define MAX_NUMBERS 100000000
 
 void swap(int *a, int *b)
@@ -87,7 +89,31 @@ void mergeSortedFragments(int *array, int totalSize, int *fragmentSizes, int wor
     }
     free(tempArray);
 }
+int isPrime(int n)
+{
+    if (n == 1 || n == 0)
+        return false;
 
+    for (int i = 2; i * i <= n; i++)
+    {
+        if (n % i == 0)
+            return false;
+    }
+    return true;
+}
+int countPrimes(int array[], int size)
+{
+    int primeCounter = 0;
+    for (int i = 0; i < size; i++)
+    {
+        if (isPrime(array[i]))
+        {
+
+            primeCounter++;
+        }
+    }
+    return primeCounter;
+}
 int main(int argc, char **argv)
 {
     int processRank, numeroProcesos;
@@ -167,6 +193,16 @@ int main(int argc, char **argv)
     */
     quickSort(localFragment, 0, localFragmentSize - 1);
     printf("Proceso %d: Fragmento ordenado\n", processRank);
+
+    printf("Proceso %d: Contando primos\n", processRank);
+    /*
+    Cada nodo cuenta la cantidad de primos que tiene y con MPI_reduce
+    se envian y reciben en el root y se suman las cantidades
+    */
+    int fragmentPrimesQuantity = countPrimes(localFragment, localFragmentSize);
+    int totalPrimesQuantity = 0;
+    MPI_Reduce(&fragmentPrimesQuantity, &totalPrimesQuantity, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+    printf("Proceso %d: Finalizado contar primos\n", processRank);
     MPI_Barrier(MPI_COMM_WORLD);
     // each even process should send its fragment to the next odd process
     // should call mergeFragments
@@ -226,11 +262,11 @@ int main(int argc, char **argv)
         double time_spent_ms = time_spent_sec * 1e3;
         double time_spent_ns = time_spent_sec * 1e9;
 
-        printf("Tiempo de ejecución desde la división hasta la fusión:\n");
+        printf("Tiempo total ordenando y buscando primos con %i procesos:\n", numeroProcesos);
         printf("  %.9f segundos\n", time_spent_sec);
         printf("  %.6f milisegundos\n", time_spent_ms);
         printf("  %.0f nanosegundos\n", time_spent_ns);
-
+        printf("Cantidad de primos: %i\n", totalPrimesQuantity);
         // Liberamos la memoria en el root
         free(array);
         free(fragmentSizes);
