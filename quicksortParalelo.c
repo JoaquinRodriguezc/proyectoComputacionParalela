@@ -62,7 +62,7 @@ void mergeSortedFragments(int *array, int totalSize, int *fragmentSizes, int wor
 
     for (i = 0; i < totalSize; i++)
     {
-        int minValue = _INT_MAX_;
+        int minValue = 1000000;
         int minIndex = -1;
 
         /**
